@@ -8,7 +8,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $content = $_POST['content'];
 
     // MẬT KHẨU ĐƠN GIẢN (Bạn có thể đổi ở đây)
-    if ($password === "123456") {
+
+    $env_pass = getenv('ADMIN_PASSWORD');
+    $real_pass = $env_pass ? $env_pass : '123456';
+    
+    if ($pass === $real_pass) {
         $file = 'data.json';
         
         // Lấy dữ liệu cũ
@@ -75,4 +79,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 
 </body>
+
 </html>

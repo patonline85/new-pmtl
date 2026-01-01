@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max_width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+
+header {
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+header h1 { margin: 0; color: #d35400; }
+
+/* Style cho danh sách tin */
+.news-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.news-item:last-child { border-bottom: none; }
+
+.news-item .title {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #0056b3;
+}
+
+.news-item .date {
+    font-size: 12px;
+    color: #888;
+    background: #eee;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.news-item .content {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+}
+
+/* Style cho Form */
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    background-color: #d35400;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+button:hover { background-color: #b34700; }

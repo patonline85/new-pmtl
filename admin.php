@@ -1,43 +1,64 @@
 <?php
+session_start();
+
+// Đường dẫn file dữ liệu (khớp với cấu trúc trên Docker)
+$file = 'data/data.json';
 $message = "";
 
-// Xử lý khi bấm nút Đăng bài
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $password = $_POST['password'];
-    $title = $_POST['title'];
-    $content = $_POST['content'];
+// 1. LẤY MẬT KHẨU TỪ BIẾN MÔI TRƯỜNG (DOCKER)
+// Nếu không thiết lập trong Portainer thì mặc định là '123456'
+$env_pass = getenv('ADMIN_PASSWORD');
+$real_pass = $env_pass ? $env_pass : '123456';
 
-    // MẬT KHẨU ĐƠN GIẢN (Bạn có thể đổi ở đây)
+// 2. Xử lý Đăng xuất
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: admin.php");
+    exit;
+}
 
-    $env_pass = getenv('ADMIN_PASSWORD');
-    $real_pass = $env_pass ? $env_pass : '123456';
-    
-    if ($pass === $real_pass) {
-        $file = 'data.json';
-        
-        // Lấy dữ liệu cũ
-        $current_data = file_get_contents($file);
-        $array_data = json_decode($current_data, true);
-        if (!$array_data) $array_data = [];
+// 3. Xử lý Đăng nhập
+if (isset($_POST['login'])) {
+    // Chỉ lấy password khi form đã được gửi
+    $pass = isset($_POST['password']) ? $_POST['password'] : '';
 
-        // Tạo bài viết mới
-        $new_post = array(
-            'title' => $title,
-            'content' => $content,
-            'date' => date("d/m/Y") // Lấy ngày hiện tại
-        );
-
-        // Đưa bài mới lên đầu danh sách
-        array_unshift($array_data, $new_post);
-
-        // Lưu lại vào file JSON
-        if(file_put_contents($file, json_encode($array_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
-            $message = "<span style='color:green'>Đăng bài thành công! <a href='index.php'>Xem trang chủ</a></span>";
-        } else {
-            $message = "<span style='color:red'>Lỗi không ghi được file. Kiểm tra quyền ghi (permission).</span>";
-        }
+    if ($pass === $real_pass) { 
+        $_SESSION['loggedin'] = true;
     } else {
         $message = "<span style='color:red'>Sai mật khẩu!</span>";
+    }
+}
+
+// 4. Xử lý Đăng bài (Chỉ khi đã đăng nhập)
+if (isset($_POST['post_news']) && isset($_SESSION['loggedin'])) {
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    
+    // Đọc dữ liệu cũ
+    if (file_exists($file)) {
+        $current_data = file_get_contents($file);
+        $array_data = json_decode($current_data, true);
+    } else {
+        $array_data = [];
+    }
+    
+    if (!is_array($array_data)) $array_data = [];
+
+    // Tạo bài mới
+    $new_post = array(
+        'title' => $title,
+        'content' => $content,
+        'date' => date("d/m/Y H:i")
+    );
+    
+    // Đưa lên đầu danh sách
+    array_unshift($array_data, $new_post);
+    
+    // Lưu file
+    if(file_put_contents($file, json_encode($array_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
+        $message = "<span style='color:green'>Đăng bài thành công!</span>";
+    } else {
+        $message = "<span style='color:red'>Lỗi ghi file. Kiểm tra quyền thư mục data.</span>";
     }
 }
 ?>
@@ -47,37 +68,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Tin Tức</title>
+    <title>Quản Trị Tin Tức</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <h2>Soạn Thảo Tin Tức</h2>
-    <p><?php echo $message; ?></p>
-    
-    <form method="post" action="">
-        <div class="form-group">
-            <label>Tiêu đề:</label>
-            <input type="text" name="title" required placeholder="Nhập tiêu đề bài viết...">
-        </div>
+    <?php if (!isset($_SESSION['loggedin'])): ?>
+        <h2>Đăng Nhập Admin</h2>
+        <p><?php echo $message; ?></p>
+        <form method="post">
+            <div class="form-group">
+                <label>Mật khẩu:</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" name="login">Đăng Nhập</button>
+        </form>
+        <br><a href="index.php">← Về trang chủ</a>
+
+    <?php else: ?>
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Viết Bài Mới</h2>
+            <a href="?logout=true" style="color:red; text-decoration:none;">[Đăng xuất]</a>
+        </header>
         
-        <div class="form-group">
-            <label>Nội dung:</label>
-            <textarea name="content" rows="10" required placeholder="Nhập nội dung văn bản..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Mật khẩu đăng bài:</label>
-            <input type="password" name="password" required placeholder="Nhập mật khẩu quản trị">
-        </div>
-
-        <button type="submit">Đăng Bài</button>
-    </form>
-    <br>
-    <a href="index.php">← Quay lại trang tin</a>
+        <p><?php echo $message; ?></p>
+        
+        <form method="post">
+            <div class="form-group">
+                <label>Tiêu đề:</label>
+                <input type="text" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Nội dung:</label>
+                <textarea name="content" rows="10" required></textarea>
+            </div>
+            
+            <button type="submit" name="post_news">Gửi Bài</button>
+        </form>
+        <br>
+        <a href="index.php" target="_blank">→ Xem trang chủ</a>
+    <?php endif; ?>
 </div>
 
 </body>
-
 </html>

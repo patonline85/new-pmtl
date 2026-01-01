@@ -8,17 +8,10 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # Thay vì map ra đường dẫn cụ thể, ta dùng Named Volume (Docker tự quản lý)
-      - news_data:/var/www/html/data
-    
-    # DÒNG QUAN TRỌNG: Tự động cấp quyền cho PHP ghi được dữ liệu khi khởi động
-    # Nó sẽ chạy lệnh chown trước, sau đó mới bật Apache
-    command: >
-      sh -c "chown -R www-data:www-data /var/www/html/data && apache2-foreground"
+      # 1. DỮ LIỆU BÀI VIẾT (Lưu cứng ở máy chủ Armbian để không mất khi update code)
+      - /home/docker/news-data:/var/www/html/data
       
+      # 2. CẤU HÌNH PHP (Tùy chọn, để upload ảnh lớn hơn nếu cần)
+      # - ./php.ini:/usr/local/etc/php/php.ini
     environment:
       - TZ=Asia/Ho_Chi_Minh
-
-# Khai báo Volume do Docker quản lý
-volumes:
-  news_data:

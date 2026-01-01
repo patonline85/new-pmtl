@@ -26,12 +26,23 @@
         <?php
         function displayContent($content) {
             if (empty($content)) return "";
-            // Tự động nhận diện Youtube Link
+
+            // 1. Tự động chuyển link Youtube trần thành Video Player trước
             $content = preg_replace(
                 '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', 
                 '<div class="video-responsive"><iframe src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>', 
                 $content
             );
+
+            // 2. [MỚI] Tự động biến các link web còn lại thành thẻ <a> bấm vào được
+            // Regex này sẽ BỎ QUA các link đã nằm trong thẻ src="" hoặc href="" (để không làm hỏng video)
+            $content = preg_replace(
+                '/(?<!src="|href="|">)(https?:\/\/[^\s<]+)/', 
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>', 
+                $content
+            );
+
+            // 3. Xuống dòng
             return nl2br($content);
         }
 
@@ -117,3 +128,4 @@
 
 </body>
 </html>
+

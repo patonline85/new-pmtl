@@ -98,29 +98,47 @@
 
 <script>
     function toggleContent(btn) {
+        // Tìm khung nội dung phía trước
         var contentDiv = btn.previousElementSibling;
+        
         if (contentDiv.classList.contains('content-collapsed')) {
+            // MỞ RA:
             contentDiv.classList.remove('content-collapsed');
+            // Gán chiều cao tối đa lớn để video dọc hiển thị hết
+            contentDiv.style.maxHeight = "none"; 
             btn.innerHTML = "Thu gọn ▲";
         } else {
+            // THU LẠI:
             contentDiv.classList.add('content-collapsed');
+            // Xóa style inline để quay về giới hạn 280px của CSS
+            contentDiv.style.maxHeight = null; 
             btn.innerHTML = "Xem thêm ▼";
-            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Cuộn nhẹ về vị trí nút để người đọc không bị lạc
+            // Sử dụng 'nearest' để đỡ bị giật màn hình
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
+
+    // Logic kiểm tra độ dài bài viết khi tải trang
     window.addEventListener('load', function() {
-        var contents = document.querySelectorAll('.content-wrapper');
-        contents.forEach(function(div) {
-            if (div.scrollHeight <= 280) {
-                div.classList.remove('content-collapsed'); 
-                var btn = div.nextElementSibling;
-                if (btn && btn.classList.contains('btn-readmore')) {
-                    btn.classList.add('hidden');
+        // Chờ thêm 1 giây để TikTok/Youtube tải xong mới tính toán chiều cao
+        setTimeout(function() {
+            var contents = document.querySelectorAll('.content-wrapper');
+            contents.forEach(function(div) {
+                // Nếu bài viết thực sự ngắn (dưới 280px)
+                if (div.scrollHeight <= 280) {
+                    div.classList.remove('content-collapsed'); 
+                    var btn = div.nextElementSibling;
+                    if (btn && btn.classList.contains('btn-readmore')) {
+                        btn.style.display = 'none'; // Ẩn nút đi
+                    }
                 }
-            }
-        });
+            });
+        }, 1000); // Delay 1000ms
     });
 </script>
 
 </body>
 </html>
+

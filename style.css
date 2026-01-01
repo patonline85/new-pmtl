@@ -126,3 +126,17 @@ button { background: #8B4513; color: #fff; padding: 10px 20px; border: none; cur
 .action-btn { font-size: 12px; padding: 4px 8px; border-radius: 3px; text-decoration: none; margin-left: 5px; display: inline-block; }
 .edit-btn { background: #FFF8E1; color: #8B4513; border: 1px solid #E6D5B8; }
 .del-btn { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+
+/* --- CSS CHO LINK TRONG BÀI VIẾT --- */
+.content-wrapper a {
+    color: #b35400; /* Màu cam nâu đậm */
+    text-decoration: none; /* Bỏ gạch chân */
+    border-bottom: 1px dotted #b35400; /* Gạch chân bằng dấu chấm nhẹ nhàng */
+    font-weight: bold;
+    word-break: break-all; /* Xuống dòng nếu link quá dài */
+}
+
+.content-wrapper a:hover {
+    color: #d35400;
+    border-bottom: 1px solid #d35400; /* Hover vào thì gạch chân liền */
+}

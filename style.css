@@ -1,9 +1,9 @@
 /* --- CẤU HÌNH CHUNG --- */
 body {
     font-family: 'Noto Serif', 'Times New Roman', serif;
-    background-color: #FDFCF8; /* Màu nền trắng kem nhẹ */
+    background-color: #FDFCF8;
     margin: 0;
-    padding: 10px; /* Giảm padding body trên mobile cho rộng rãi */
+    padding: 10px; /* Padding nhỏ cho mobile */
     color: #4A3B32;
 }
 
@@ -17,59 +17,71 @@ body {
     border: 1px solid #E6D5B8;
 }
 
-/* --- HEADER: QUAN TRỌNG NHẤT --- */
+/* --- HEADER (ĐÃ TỐI ƯU CHO MOBILE 1 DÒNG) --- */
 .main-header {
-    background-color: #FFFBBE; /* Mã màu bạn yêu cầu */
-    padding: 15px 20px; /* Padding gọn gàng hơn */
+    background-color: #FFFBBE;
+    /* Giảm padding để tiết kiệm diện tích ngang */
+    padding: 12px 12px; 
     border-bottom: 3px solid #D9A404;
     
-    /* FLEXBOX: Giữ logo và chữ nằm ngang hàng */
     display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: flex-start;
-    gap: 15px; /* Khoảng cách giữa Logo và Chữ */
+    align-items: center;
+    /* Giảm khoảng cách giữa logo và chữ xuống còn 10px */
+    gap: 10px; 
 }
 
-/* Điều chỉnh Logo nhỏ gọn */
+/* Logo trên điện thoại nhỏ xinh hơn */
 .logo {
-    width: 60px; /* Kích thước cố định trên điện thoại */
-    height: auto; /* Tự động tính chiều cao */
-    object-fit: contain;
-    flex-shrink: 0; /* QUAN TRỌNG: Không cho logo bị méo hoặc co lại */
+    width: 45px; /* Giảm từ 60px xuống 45px */
+    height: auto;
+    flex-shrink: 0; 
     filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
 }
 
-/* Khu vực chứa chữ */
 .header-content {
-    flex-grow: 1; /* Chiếm toàn bộ không gian còn lại */
+    flex-grow: 1;
+    /* Ngăn không cho chữ bị vỡ bố cục */
+    min-width: 0; 
 }
 
 .header-content h1 {
     margin: 0;
-    color: #8B4513; /* Màu nâu Phật giáo */
-    font-size: 18px; /* Mặc định font nhỏ cho mobile */
-    line-height: 1.3;
+    color: #8B4513;
     font-weight: 700;
+    line-height: 1.2;
+    
+    /* --- KỸ THUẬT ÉP 1 DÒNG --- */
+    font-size: 15px; /* Kích thước vừa đủ để không bị xuống dòng */
+    white-space: nowrap; /* Bắt buộc thẳng hàng, không xuống dòng */
+    overflow: hidden; /* Ẩn phần thừa nếu màn hình quá bé (như đồng hồ) */
+    text-overflow: ellipsis; /* Hiện dấu ... nếu vẫn không đủ chỗ */
 }
 
 .header-content p {
-    margin: 4px 0 0 0;
+    margin: 2px 0 0 0;
     color: #795548;
-    font-size: 13px;
+    font-size: 12px;
     font-style: italic;
+    
+    /* Cũng ép dòng phụ thành 1 dòng cho gọn */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* --- MÀN HÌNH LỚN (PC/Tablet) --- */
+/* --- MÀN HÌNH LỚN (PC/TABLET) --- */
+/* Khi màn hình rộng hơn 768px, tự động phóng to mọi thứ lên cho đẹp */
 @media (min-width: 768px) {
     body { padding: 20px; }
     
     .main-header { padding: 25px 30px; gap: 25px; }
     
-    /* Trên PC thì logo to hơn */
-    .logo { width: 90px; }
+    .logo { width: 90px; } /* Logo to lại */
     
-    /* Trên PC chữ to hơn */
-    .header-content h1 { font-size: 28px; }
+    .header-content h1 { 
+        font-size: 28px; /* Chữ to lại */
+        white-space: normal; /* Cho phép xuống dòng nếu cần (trên PC thì thoải mái) */
+    }
     .header-content p { font-size: 15px; }
 }
 
@@ -118,7 +130,7 @@ footer {
 }
 footer a { color: #8B4513; text-decoration: none; font-size: 13px; }
 
-/* Form Admin (Giữ nguyên) */
+/* Form Admin */
 .form-group { margin-bottom: 15px; }
 label { display: block; margin-bottom: 5px; font-weight: bold; }
 input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; box-sizing: border-box; }

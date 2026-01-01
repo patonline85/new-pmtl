@@ -1,74 +1,152 @@
+/* Sử dụng font chữ có chân (Serif) cho trang nhã */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Noto Serif', 'Times New Roman', serif;
+    /* Nền tổng thể màu kem nhạt ấm áp */
+    background-color: #FDFCF8;
     margin: 0;
     padding: 20px;
-    color: #333;
+    color: #4A3B32; /* Màu chữ nâu đậm */
 }
 
+/* Khung chính giữa trang */
 .container {
-    max_width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 5px;
+    background: #fff; /* Nền trắng để nội dung dễ đọc */
+    padding: 0; /* Bỏ padding để header tràn viền */
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1); /* Đổ bóng màu nâu nhẹ */
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #E6D5B8; /* Viền màu vàng nâu nhạt */
 }
 
-header {
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
+/* --- THIẾT KẾ HEADER MỚI --- */
+.main-header {
+    /* Sử dụng màu yêu cầu làm nền cho header */
+    background-color: #FFFBBE;
+    padding: 25px 30px;
+    border-bottom: 3px solid #D9A404; /* Viền dưới màu vàng đồng */
+    
+    /* Sử dụng Flexbox để căn logo và chữ nằm ngang */
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 20px; /* Khoảng cách giữa logo và chữ */
 }
 
-header h1 { margin: 0; color: #d35400; }
+/* CSS cho Logo */
+.logo {
+    max-height: 80px; /* Chiều cao tối đa của logo, điều chỉnh nếu cần */
+    width: auto;
+    /* Thêm một chút hiệu ứng nổi nhẹ cho logo */
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+}
 
-/* Style cho danh sách tin */
+.header-content h1 {
+    margin: 0;
+    /* Màu tiêu đề chính: Nâu đỏ đậm */
+    color: #8B4513;
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+.header-content p {
+    margin: 5px 0 0 0;
+    /* Màu chữ phụ: Nâu nhạt hơn */
+    color: #795548;
+    font-style: italic;
+}
+
+/* --- DANH SÁCH TIN TỨC --- */
+.news-list {
+    padding: 30px;
+}
+
 .news-item {
-    border-bottom: 1px solid #eee;
-    padding: 15px 0;
+    border-bottom: 1px solid #F0EAD6; /* Viền dưới màu kem */
+    padding: 25px 0;
 }
 
 .news-item:last-child { border-bottom: none; }
 
+/* Tiêu đề bài viết */
 .news-item .title {
-    margin: 5px 0;
-    font-size: 18px;
-    color: #0056b3;
+    margin: 10px 0;
+    font-size: 20px;
+    /* Màu tiêu đề bài viết: Nâu đậm */
+    color: #5D4037;
+    font-weight: bold;
 }
 
+/* Ngày tháng */
 .news-item .date {
-    font-size: 12px;
-    color: #888;
-    background: #eee;
-    padding: 2px 5px;
-    border-radius: 3px;
+    font-size: 13px;
+    /* Nền ngày tháng màu vàng kem nhạt theo tông chủ đề */
+    background: #FFF8E1;
+    color: #A67B5B;
+    padding: 4px 10px;
+    border-radius: 20px; /* Bo tròn viên thuốc */
+    display: inline-block;
+    border: 1px solid #FFE0B2;
 }
 
+/* Nội dung bài viết */
 .news-item .content {
-    margin-top: 10px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #444;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #3E2723; /* Màu chữ nội dung dễ đọc */
+    text-align: justify; /* Căn đều 2 bên cho trang trọng */
 }
 
-/* Style cho Form */
-.form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 5px; font-weight: bold; }
+/* Thông báo trống */
+.empty {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #FFFBBE; /* Nền footer cùng màu header */
+    border-top: 1px solid #E6D5B8;
+}
+
+footer a {
+    font-size: 13px;
+    color: #8B4513;
+    text-decoration: none;
+}
+footer a:hover { text-decoration: underline; }
+
+/* --- CSS CHO TRANG ADMIN/FORM (Giữ lại để dùng chung) --- */
+.form-group { margin-bottom: 20px; }
+label { display: block; margin-bottom: 8px; font-weight: bold; color: #5D4037; }
 input[type="text"], input[type="password"], textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 12px;
+    border: 1px solid #D7CCC8;
     border-radius: 4px;
     box-sizing: border-box;
+    font-family: inherit; /* Dùng chung font với body */
+    background-color: #FFFCF2; /* Nền input hơi vàng nhẹ */
+}
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #D9A404; /* Khi bấm vào thì viền màu vàng đồng */
 }
 button {
-    background-color: #d35400;
-    color: white;
-    padding: 10px 20px;
+    background-color: #8B4513; /* Nút màu nâu đậm */
+    color: #FFFBBE; /* Chữ trên nút màu kem sáng */
+    padding: 12px 25px;
     border: none;
     cursor: pointer;
     font-size: 16px;
     border-radius: 4px;
+    font-family: inherit;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
-button:hover { background-color: #b34700; }
+button:hover { background-color: #A52A2A; } /* Hover chuyển sang nâu đỏ */

@@ -6,7 +6,7 @@ services:
     container_name: news-web
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       # ÁNH XẠ TRỰC TIẾP:
       # Bên trái: Đường dẫn thật trên máy Armbian (nơi bạn vừa tạo folder)
@@ -15,3 +15,4 @@ services:
       
     environment:
       - TZ=Asia/Ho_Chi_Minh
+

@@ -62,7 +62,7 @@
                     // GỌI HÀM XỬ LÝ NỘI DUNG Ở ĐÂY
                     // Lưu ý: Không dùng htmlspecialchars cho content nữa vì ta cần render mã HTML của iframe
                     // Thay vào đó ta sẽ lọc cơ bản để tránh lỗi XSS nếu cần (nhưng đây là admin post nên tạm tin tưởng)
-                    $clean_content = strip_tags($item['content']); // Lọc thẻ HTML lạ để an toàn
+                    echo '<div class="content">' . autoEmbedContent($item['content']) . '</div>';
                     echo '<div class="content">' . autoEmbedContent($clean_content) . '</div>';
                     
                     echo '</div>';
@@ -83,3 +83,4 @@
 
 </body>
 </html>
+

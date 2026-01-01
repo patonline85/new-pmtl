@@ -94,15 +94,23 @@ body {
 }
 .video-responsive iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-/* Quan trọng: Ép các iframe, blockquote và hình ảnh không tràn màn hình */
+/* 1. Dành cho HÌNH ẢNH: Cần height: auto để giữ tỷ lệ */
+.content-wrapper img {
+    max-width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box;
+    margin: 10px auto !important;
+    display: block;
+}
+
+/* 2. Dành cho VIDEO (TikTok, Youtube Embed): KHÔNG ĐƯỢC để height: auto */
 .content-wrapper iframe, 
 .content-wrapper blockquote, 
-.content-wrapper div,
-.content-wrapper img {
-    max-width: 100% !important; 
-    height: auto; /* Giữ tỷ lệ ảnh */
-    box-sizing: border-box; 
-    margin: 10px auto !important; 
+.content-wrapper div {
+    max-width: 100% !important;
+    /* height: auto; <--- Đã xóa dòng này */
+    box-sizing: border-box;
+    margin: 10px auto !important;
     display: block;
 }
 .tiktok-embed { margin: 0 auto !important; width: 100% !important; min-width: auto !important; }
@@ -137,3 +145,4 @@ button { background: #8B4513; color: #fff; padding: 10px 20px; border: none; cur
 .admin-list th { background-color: #FFF8E1; color: #5D4037; padding: 10px; text-align: left; border-bottom: 2px solid #E6D5B8; }
 .admin-list td { padding: 10px; border-bottom: 1px solid #eee; color: #3E2723; }
 .admin-list tr:hover { background-color: #fafafa; }
+

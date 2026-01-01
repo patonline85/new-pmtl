@@ -7,10 +7,9 @@
 	<link rel="icon" href="logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <script async src="https://www.tiktok.com/embed.js"></script>
     <div id="fb-root"></div>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0"></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
 </head>
 <body>
 
@@ -28,38 +27,33 @@
         function displayContent($content) {
             if (empty($content)) return "";
 
-            // 1. TỰ ĐỘNG XỬ LÝ LINK TIKTOK (MỚI)
-            // Bạn chỉ cần dán link: https://www.tiktok.com/@user/video/123456789
-            // Code sẽ tự tạo ra khung Blockquote chuẩn
+            // 1. [MỚI] SỬA LỖI TIKTOK & FACEBOOK EMBED
+            // Loại bỏ dấu xuống dòng (\n) nằm bên trong thẻ mở HTML để tránh bị nl2br làm gãy
+            // Ví dụ: <blockquote \n class="..."> sẽ thành <blockquote class="...">
             $content = preg_replace_callback(
-                '#https://www\.tiktok\.com/@[a-zA-Z0-9\._-]+/video/(\d+)#',
-                function($matches) {
-                    $full_link = $matches[0];
-                    $video_id = $matches[1];
-                    return '
-                    <blockquote class="tiktok-embed" cite="'.$full_link.'" data-video-id="'.$video_id.'" style="max-width: 605px;min-width: 325px;">
-                        <section> <a target="_blank" href="'.$full_link.'">Đang tải video TikTok...</a> </section>
-                    </blockquote>';
+                '/<(blockquote|iframe|script|div)([^>]*)>/s',
+                function ($matches) {
+                    // Xóa hết xuống dòng trong thẻ mở
+                    return '<' . $matches[1] . str_replace(["\n", "\r"], " ", $matches[2]) . '>';
                 },
                 $content
             );
 
-            // 2. Tự động xử lý Link Youtube
+            // 2. Tự động chuyển link Youtube trần thành Video Player
             $content = preg_replace(
                 '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', 
                 '<div class="video-responsive"><iframe src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>', 
                 $content
             );
 
-            // 3. Biến link web thường thành thẻ <a> (Trừ link TikTok/Youtube đã xử lý ở trên)
-            // Regex này bỏ qua các link nằm trong thẻ cite="" hoặc src=""
+            // 3. Biến link web thành thẻ <a> bấm được (trừ link trong src/href)
             $content = preg_replace(
-                '/(?<!cite="|src="|href="|">)(https?:\/\/[^\s<]+)/', 
+                '/(?<!src="|href="|">)(https?:\/\/[^\s<]+)/', 
                 '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>', 
                 $content
             );
 
-            // 4. Xuống dòng
+            // 4. Xuống dòng văn bản
             return nl2br($content);
         }
 
@@ -78,11 +72,14 @@
                     echo '<span class="date">' . $date . '</span>';
                     echo '<h3 class="title">' . htmlspecialchars($title) . '</h3>';
                     
+                    // Nội dung
                     echo '<div class="content-wrapper content-collapsed">';
                     echo displayContent($content);
                     echo '</div>';
                     
+                    // Nút Xem Thêm
                     echo '<button class="btn-readmore" onclick="toggleContent(this)">Xem thêm ▼</button>';
+                    
                     echo '</div>';
                 }
             } else {

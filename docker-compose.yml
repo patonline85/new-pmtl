@@ -2,17 +2,20 @@ version: '3'
 
 services:
   web:
-    image: php:8.2-apache
+    # Thay dòng image bằng dòng build
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    
     container_name: news-web
     restart: unless-stopped
     ports:
       - "8081:80"
     volumes:
-      # ÁNH XẠ TRỰC TIẾP:
-      # Bên trái: Đường dẫn thật trên máy Armbian (nơi bạn vừa tạo folder)
-      # Bên phải: Đường dẫn trong web server
+      # CHỈ GIỮ LẠI DÒNG MAP DỮ LIỆU
+      # Code đã được copy vào trong lúc Build rồi, nên không map code nữa
+      # Chỉ map thư mục data ra ngoài để lưu bài viết không bị mất
       - /home/docker/news-data:/var/www/html/data
       
     environment:
       - TZ=Asia/Ho_Chi_Minh
-

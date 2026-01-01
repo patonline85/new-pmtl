@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pháp Môn Tâm Linh 心靈法門</title>
-    <link rel="icon" href="logo.png" type="image/png">
+	<link rel="icon" href="logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script async src="https://www.tiktok.com/embed.js"></script>
@@ -27,22 +27,33 @@
         function displayContent($content) {
             if (empty($content)) return "";
 
-            // 1. Tự động chuyển link Youtube trần thành Video Player trước
+            // 1. [MỚI] SỬA LỖI TIKTOK & FACEBOOK EMBED
+            // Loại bỏ dấu xuống dòng (\n) nằm bên trong thẻ mở HTML để tránh bị nl2br làm gãy
+            // Ví dụ: <blockquote \n class="..."> sẽ thành <blockquote class="...">
+            $content = preg_replace_callback(
+                '/<(blockquote|iframe|script|div)([^>]*)>/s',
+                function ($matches) {
+                    // Xóa hết xuống dòng trong thẻ mở
+                    return '<' . $matches[1] . str_replace(["\n", "\r"], " ", $matches[2]) . '>';
+                },
+                $content
+            );
+
+            // 2. Tự động chuyển link Youtube trần thành Video Player
             $content = preg_replace(
                 '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', 
                 '<div class="video-responsive"><iframe src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>', 
                 $content
             );
 
-            // 2. [MỚI] Tự động biến các link web còn lại thành thẻ <a> bấm vào được
-            // Regex này sẽ BỎ QUA các link đã nằm trong thẻ src="" hoặc href="" (để không làm hỏng video)
+            // 3. Biến link web thành thẻ <a> bấm được (trừ link trong src/href)
             $content = preg_replace(
                 '/(?<!src="|href="|">)(https?:\/\/[^\s<]+)/', 
                 '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>', 
                 $content
             );
 
-            // 3. Xuống dòng
+            // 4. Xuống dòng văn bản
             return nl2br($content);
         }
 
@@ -61,13 +72,12 @@
                     echo '<span class="date">' . $date . '</span>';
                     echo '<h3 class="title">' . htmlspecialchars($title) . '</h3>';
                     
-                    // BAO BỌC NỘI DUNG VÀO CLASS wrapper
-                    // Mặc định thêm class 'content-collapsed' để thu gọn ngay từ đầu
+                    // Nội dung
                     echo '<div class="content-wrapper content-collapsed">';
                     echo displayContent($content);
                     echo '</div>';
                     
-                    // Nút Xem Thêm (Mặc định hiện, JS sẽ ẩn nếu bài ngắn)
+                    // Nút Xem Thêm
                     echo '<button class="btn-readmore" onclick="toggleContent(this)">Xem thêm ▼</button>';
                     
                     echo '</div>';
@@ -87,36 +97,22 @@
 </div>
 
 <script>
-    // Hàm chạy khi bấm nút
     function toggleContent(btn) {
-        // Tìm cái khung nội dung ngay phía trước nút bấm
         var contentDiv = btn.previousElementSibling;
-        
-        // Kiểm tra xem đang đóng hay mở
         if (contentDiv.classList.contains('content-collapsed')) {
-            // Đang đóng -> Mở ra
             contentDiv.classList.remove('content-collapsed');
             btn.innerHTML = "Thu gọn ▲";
         } else {
-            // Đang mở -> Đóng lại
             contentDiv.classList.add('content-collapsed');
             btn.innerHTML = "Xem thêm ▼";
-            
-            // Cuộn nhẹ lên đầu bài viết để người đọc không bị hụt hẫng
             contentDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
-
-    // Hàm chạy tự động khi tải trang để kiểm tra bài nào ngắn thì ẩn nút đi
     window.addEventListener('load', function() {
         var contents = document.querySelectorAll('.content-wrapper');
-        
         contents.forEach(function(div) {
-            // Nếu nội dung thực tế ngắn hơn 280px (ngưỡng thu gọn)
             if (div.scrollHeight <= 280) {
-                // Xóa hiệu ứng mờ
                 div.classList.remove('content-collapsed'); 
-                // Tìm nút bấm ngay sau nó và ẩn đi
                 var btn = div.nextElementSibling;
                 if (btn && btn.classList.contains('btn-readmore')) {
                     btn.classList.add('hidden');
@@ -128,4 +124,3 @@
 
 </body>
 </html>
-

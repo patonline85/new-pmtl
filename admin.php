@@ -1,66 +1,111 @@
 <?php
 session_start();
 
-// Đường dẫn file dữ liệu (khớp với cấu trúc trên Docker)
+// CẤU HÌNH
 $file = 'data/data.json';
 $message = "";
 
-// 1. LẤY MẬT KHẨU TỪ BIẾN MÔI TRƯỜNG (DOCKER)
-// Nếu không thiết lập trong Portainer thì mặc định là '123456'
+// 1. LẤY MẬT KHẨU TỪ DOCKER
 $env_pass = getenv('ADMIN_PASSWORD');
 $real_pass = $env_pass ? $env_pass : '123456';
 
-// 2. Xử lý Đăng xuất
+// 2. XỬ LÝ ĐĂNG XUẤT
 if (isset($_GET['logout'])) {
     session_destroy();
     header("Location: admin.php");
     exit;
 }
 
-// 3. Xử lý Đăng nhập
+// 3. XỬ LÝ ĐĂNG NHẬP
 if (isset($_POST['login'])) {
-    // Chỉ lấy password khi form đã được gửi
     $pass = isset($_POST['password']) ? $_POST['password'] : '';
-
     if ($pass === $real_pass) { 
         $_SESSION['loggedin'] = true;
     } else {
-        $message = "<span style='color:red'>Sai mật khẩu!</span>";
+        $message = "<span class='msg-error'>Sai mật khẩu!</span>";
     }
 }
 
-// 4. Xử lý Đăng bài (Chỉ khi đã đăng nhập)
-if (isset($_POST['post_news']) && isset($_SESSION['loggedin'])) {
+// HÀM ĐỌC DỮ LIỆU
+function getData($file) {
+    if (file_exists($file)) {
+        $json = file_get_contents($file);
+        $data = json_decode($json, true);
+        return is_array($data) ? $data : [];
+    }
+    return [];
+}
+
+// HÀM LƯU DỮ LIỆU
+function saveData($file, $data) {
+    return file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}
+
+// 4. XỬ LÝ GỬI BÀI (THÊM MỚI HOẶC CẬP NHẬT)
+if (isset($_POST['save_post']) && isset($_SESSION['loggedin'])) {
     $title = $_POST['title'];
     $content = $_POST['content'];
-    
-    // Đọc dữ liệu cũ
-    if (file_exists($file)) {
-        $current_data = file_get_contents($file);
-        $array_data = json_decode($current_data, true);
-    } else {
-        $array_data = [];
-    }
-    
-    if (!is_array($array_data)) $array_data = [];
+    $edit_id = $_POST['edit_id']; // Lấy ID bài đang sửa (nếu có)
 
-    // Tạo bài mới
-    $new_post = array(
-        'title' => $title,
-        'content' => $content,
-        'date' => date("d/m/Y H:i")
-    );
-    
-    // Đưa lên đầu danh sách
-    array_unshift($array_data, $new_post);
-    
-    // Lưu file
-    if(file_put_contents($file, json_encode($array_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
-        $message = "<span style='color:green'>Đăng bài thành công!</span>";
+    $current_data = getData($file);
+
+    if ($edit_id !== "") {
+        // --- TRƯỜNG HỢP SỬA BÀI ---
+        $index = (int)$edit_id;
+        if (isset($current_data[$index])) {
+            $current_data[$index]['title'] = $title;
+            $current_data[$index]['content'] = $content;
+            // Giữ nguyên ngày cũ hoặc cập nhật ngày mới tùy bạn (ở đây mình giữ ngày cũ)
+            $message = "<span class='msg-success'>Đã cập nhật bài viết!</span>";
+        }
     } else {
-        $message = "<span style='color:red'>Lỗi ghi file. Kiểm tra quyền thư mục data.</span>";
+        // --- TRƯỜNG HỢP THÊM MỚI ---
+        $new_post = array(
+            'title' => $title,
+            'content' => $content,
+            'date' => date("d/m/Y H:i")
+        );
+        array_unshift($current_data, $new_post); // Đưa lên đầu
+        $message = "<span class='msg-success'>Đăng bài mới thành công!</span>";
+    }
+
+    if(saveData($file, $current_data)) {
+        // Reset form sau khi lưu
+        $title = ""; $content = ""; $edit_id = "";
+    } else {
+        $message = "<span class='msg-error'>Lỗi ghi file data.json!</span>";
     }
 }
+
+// 5. XỬ LÝ XÓA BÀI
+if (isset($_GET['delete']) && isset($_SESSION['loggedin'])) {
+    $delete_id = (int)$_GET['delete'];
+    $current_data = getData($file);
+    
+    if (isset($current_data[$delete_id])) {
+        array_splice($current_data, $delete_id, 1); // Cắt bỏ bài viết khỏi mảng
+        saveData($file, $current_data);
+        $message = "<span class='msg-success'>Đã xóa bài viết!</span>";
+    }
+    // Xóa xong quay lại trang admin sạch sẽ
+    header("Location: admin.php"); 
+    exit;
+}
+
+// 6. CHUẨN BỊ DỮ LIỆU ĐỂ HIỂN THỊ HOẶC SỬA
+$editing_post = null;
+$edit_mode = false;
+$all_posts = getData($file);
+
+// Nếu bấm nút Sửa, lấy dữ liệu đổ vào Form
+if (isset($_GET['edit']) && isset($_SESSION['loggedin'])) {
+    $edit_index = (int)$_GET['edit'];
+    if (isset($all_posts[$edit_index])) {
+        $editing_post = $all_posts[$edit_index];
+        $edit_mode = true;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -68,47 +113,101 @@ if (isset($_POST['post_news']) && isset($_SESSION['loggedin'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Trị Tin Tức</title>
+    <title>Quản Trị - Pháp Môn Tâm Linh</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="container">
+    
     <?php if (!isset($_SESSION['loggedin'])): ?>
-        <h2>Đăng Nhập Admin</h2>
-        <p><?php echo $message; ?></p>
-        <form method="post">
+        <h2 style="text-align:center; color:#8B4513;">Đăng Nhập Admin</h2>
+        <p style="text-align:center"><?php echo $message; ?></p>
+        <form method="post" style="max-width:400px; margin:0 auto;">
             <div class="form-group">
                 <label>Mật khẩu:</label>
                 <input type="password" name="password" required>
             </div>
-            <button type="submit" name="login">Đăng Nhập</button>
+            <button type="submit" name="login" style="width:100%">Đăng Nhập</button>
         </form>
-        <br><a href="index.php">← Về trang chủ</a>
+        <div style="text-align:center; margin-top:20px;">
+            <a href="index.php">← Về trang chủ</a>
+        </div>
 
     <?php else: ?>
-        <header style="display:flex; justify-content:space-between; align-items:center;">
-            <h2>Viết Bài Mới</h2>
-            <a href="?logout=true" style="color:red; text-decoration:none;">[Đăng xuất]</a>
+        <header class="admin-header">
+            <h2><?php echo $edit_mode ? "Đang Sửa Bài" : "Viết Bài Mới"; ?></h2>
+            <div>
+                <a href="admin.php" class="btn-secondary">Viết bài mới</a>
+                <a href="index.php" target="_blank" class="btn-secondary">Xem trang</a>
+                <a href="?logout=true" class="btn-logout">[Thoát]</a>
+            </div>
         </header>
         
         <p><?php echo $message; ?></p>
         
-        <form method="post">
+        <form method="post" action="admin.php">
+            <input type="hidden" name="edit_id" value="<?php echo $edit_mode ? $_GET['edit'] : ''; ?>">
+            
             <div class="form-group">
                 <label>Tiêu đề:</label>
-                <input type="text" name="title" required>
+                <input type="text" name="title" required 
+                       value="<?php echo $edit_mode ? htmlspecialchars($editing_post['title']) : ''; ?>">
             </div>
             
             <div class="form-group">
                 <label>Nội dung:</label>
-                <textarea name="content" rows="10" required></textarea>
+                <textarea name="content" rows="10" required><?php echo $edit_mode ? htmlspecialchars($editing_post['content']) : ''; ?></textarea>
             </div>
             
-            <button type="submit" name="post_news">Gửi Bài</button>
+            <button type="submit" name="save_post">
+                <?php echo $edit_mode ? "Lưu Thay Đổi" : "Đăng Bài Ngay"; ?>
+            </button>
+            <?php if($edit_mode): ?>
+                <a href="admin.php" style="margin-left:10px; color:#666;">Hủy bỏ</a>
+            <?php endif; ?>
         </form>
-        <br>
-        <a href="index.php" target="_blank">→ Xem trang chủ</a>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #E6D5B8;">
+
+        <h3 style="color:#8B4513;">Danh sách bài đã đăng</h3>
+        <div class="admin-list">
+            <?php if (!empty($all_posts)): ?>
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#FFF8E1; color:#5D4037;">
+                            <th style="padding:10px; text-align:left;">STT</th>
+                            <th style="padding:10px; text-align:left;">Tiêu đề</th>
+                            <th style="padding:10px; text-align:left;">Ngày</th>
+                            <th style="padding:10px; text-align:right;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($all_posts as $index => $post): ?>
+                            <tr style="border-bottom:1px solid #eee;">
+                                <td style="padding:10px; width:50px; color:#999;"><?php echo $index + 1; ?></td>
+                                <td style="padding:10px; font-weight:bold; color:#3E2723;">
+                                    <?php echo htmlspecialchars($post['title']); ?>
+                                </td>
+                                <td style="padding:10px; font-size:13px; color:#A67B5B;">
+                                    <?php echo $post['date']; ?>
+                                </td>
+                                <td style="padding:10px; text-align:right;">
+                                    <a href="admin.php?edit=<?php echo $index; ?>" class="action-btn edit-btn">Sửa</a>
+                                    <a href="admin.php?delete=<?php echo $index; ?>" 
+                                       class="action-btn del-btn"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa bài này không?');">Xóa</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>Chưa có bài viết nào.</p>
+            <?php endif; ?>
+        </div>
+
     <?php endif; ?>
 </div>
 

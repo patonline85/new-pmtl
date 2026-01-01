@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pháp Môn Tâm Linh 心靈法門</title>
+    <link rel="icon" href="logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script async src="https://www.tiktok.com/embed.js"></script>
     <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0" nonce="abc"></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0"></script>
 </head>
 <body>
 
@@ -23,19 +24,14 @@
 
     <div class="news-list">
         <?php
-        // Hàm hiển thị nội dung an toàn và đẹp
         function displayContent($content) {
             if (empty($content)) return "";
-
-            // 1. Tự động chuyển link Youtube trần thành Video Player
-            // Link dạng: https://www.youtube.com/watch?v=ID hoặc https://youtu.be/ID
+            // Tự động nhận diện Youtube Link
             $content = preg_replace(
                 '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', 
                 '<div class="video-responsive"><iframe src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>', 
                 $content
             );
-
-            // 2. Xuống dòng (giữ nguyên ngắt dòng của người viết)
             return nl2br($content);
         }
 
@@ -54,10 +50,14 @@
                     echo '<span class="date">' . $date . '</span>';
                     echo '<h3 class="title">' . htmlspecialchars($title) . '</h3>';
                     
-                    // Hiển thị nội dung (Cho phép mã nhúng)
-                    echo '<div class="content">';
+                    // BAO BỌC NỘI DUNG VÀO CLASS wrapper
+                    // Mặc định thêm class 'content-collapsed' để thu gọn ngay từ đầu
+                    echo '<div class="content-wrapper content-collapsed">';
                     echo displayContent($content);
                     echo '</div>';
+                    
+                    // Nút Xem Thêm (Mặc định hiện, JS sẽ ẩn nếu bài ngắn)
+                    echo '<button class="btn-readmore" onclick="toggleContent(this)">Xem thêm ▼</button>';
                     
                     echo '</div>';
                 }
@@ -74,6 +74,46 @@
         <a href="admin.php">Đăng nhập quản trị</a>
     </footer>
 </div>
+
+<script>
+    // Hàm chạy khi bấm nút
+    function toggleContent(btn) {
+        // Tìm cái khung nội dung ngay phía trước nút bấm
+        var contentDiv = btn.previousElementSibling;
+        
+        // Kiểm tra xem đang đóng hay mở
+        if (contentDiv.classList.contains('content-collapsed')) {
+            // Đang đóng -> Mở ra
+            contentDiv.classList.remove('content-collapsed');
+            btn.innerHTML = "Thu gọn ▲";
+        } else {
+            // Đang mở -> Đóng lại
+            contentDiv.classList.add('content-collapsed');
+            btn.innerHTML = "Xem thêm ▼";
+            
+            // Cuộn nhẹ lên đầu bài viết để người đọc không bị hụt hẫng
+            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // Hàm chạy tự động khi tải trang để kiểm tra bài nào ngắn thì ẩn nút đi
+    window.addEventListener('load', function() {
+        var contents = document.querySelectorAll('.content-wrapper');
+        
+        contents.forEach(function(div) {
+            // Nếu nội dung thực tế ngắn hơn 280px (ngưỡng thu gọn)
+            if (div.scrollHeight <= 280) {
+                // Xóa hiệu ứng mờ
+                div.classList.remove('content-collapsed'); 
+                // Tìm nút bấm ngay sau nó và ẩn đi
+                var btn = div.nextElementSibling;
+                if (btn && btn.classList.contains('btn-readmore')) {
+                    btn.classList.add('hidden');
+                }
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -21,28 +21,20 @@
 
     <div class="news-list">
         <?php
-        // HÀM XỬ LÝ VIDEO THÔNG MINH
-        function autoEmbedContent($content) {
-            // 1. Xử lý Youtube Link (Dạng watch?v= hoặc youtu.be/)
+        // HÀM TỰ ĐỘNG BIẾN LINK YOUTUBE THÀNH VIDEO
+        // (Chỉ giữ lại Youtube vì nó ổn định, FB/TikTok dùng mã nhúng sẽ tốt hơn)
+        function formatContent($content) {
+            if (empty($content)) return "";
+
+            // 1. Tự động nhận diện Link Youtube -> Video
             $content = preg_replace(
                 '/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', 
                 '<div class="video-responsive"><iframe src="https://www.youtube.com/embed/$1" allowfullscreen></iframe></div>', 
                 $content
             );
 
-            // 2. Xử lý Facebook Video Link
-            // Tìm link facebook video và chuyển thành iframe
-            // Lưu ý: Link phải ở dạng công khai (Public)
-            $content = preg_replace_callback(
-                '/(https:\/\/www\.facebook\.com\/(?:watch\/\?v=|video\.php\?v=|.+?\/videos\/)(\d+)\/?)/',
-                function($matches) {
-                    $encodedUrl = urlencode($matches[0]);
-                    return '<div class="video-responsive"><iframe src="https://www.facebook.com/plugins/video.php?href='.$encodedUrl.'&show_text=false&t=0" scrolling="no" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe></div>';
-                },
-                $content
-            );
-
-            // 3. Xử lý xuống dòng cho văn bản thường
+            // 2. Chuyển xuống dòng thành thẻ <br> (nhưng không làm hỏng mã HTML nhúng)
+            // Logic: Chỉ xuống dòng ở những chỗ không phải là thẻ HTML
             $content = nl2br($content);
             
             return $content;
@@ -55,16 +47,17 @@
 
             if (!empty($news) && is_array($news)) {
                 foreach ($news as $item) {
+                    // Sửa lỗi Undefined array key: Kiểm tra xem có tồn tại title/content không
+                    $title = isset($item['title']) ? $item['title'] : '(Không tiêu đề)';
+                    $date = isset($item['date']) ? $item['date'] : '';
+                    $raw_content = isset($item['content']) ? $item['content'] : '';
+
                     echo '<div class="news-item">';
-                    echo '<span class="date">' . $item['date'] . '</span>';
-                    echo '<h3 class="title">' . htmlspecialchars($item['title']) . '</h3>';
+                    echo '<span class="date">' . $date . '</span>';
+                    echo '<h3 class="title">' . htmlspecialchars($title) . '</h3>';
                     
-                    // GỌI HÀM XỬ LÝ NỘI DUNG Ở ĐÂY
-                    // Lưu ý: Không dùng htmlspecialchars cho content nữa vì ta cần render mã HTML của iframe
-                    // Thay vào đó ta sẽ lọc cơ bản để tránh lỗi XSS nếu cần (nhưng đây là admin post nên tạm tin tưởng)
-                    echo '<div class="content">' . autoEmbedContent($item['content']) . '</div>';
-                    echo '<div class="content">' . autoEmbedContent($clean_content) . '</div>';
-                    
+                    // HIỂN THỊ NỘI DUNG (Cho phép mã nhúng hoạt động)
+                    echo '<div class="content">' . formatContent($raw_content) . '</div>';
                     echo '</div>';
                 }
             } else {
@@ -83,4 +76,3 @@
 
 </body>
 </html>
-

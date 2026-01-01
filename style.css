@@ -3,7 +3,7 @@ body {
     font-family: 'Noto Serif', 'Times New Roman', serif;
     background-color: #FDFCF8;
     margin: 0;
-    padding: 10px; /* Padding nhỏ cho mobile */
+    padding: 10px;
     color: #4A3B32;
 }
 
@@ -17,121 +17,68 @@ body {
     border: 1px solid #E6D5B8;
 }
 
-/* --- HEADER (ĐÃ TỐI ƯU CHO MOBILE 1 DÒNG) --- */
+/* --- HEADER --- */
 .main-header {
     background-color: #FFFBBE;
-    /* Giảm padding để tiết kiệm diện tích ngang */
     padding: 12px 12px; 
     border-bottom: 3px solid #D9A404;
-    
     display: flex;
     align-items: center;
-    /* Giảm khoảng cách giữa logo và chữ xuống còn 10px */
     gap: 10px; 
 }
-
-/* Logo trên điện thoại nhỏ xinh hơn */
 .logo {
-    width: 45px; /* Giảm từ 60px xuống 45px */
+    width: 45px;
     height: auto;
     flex-shrink: 0; 
     filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
 }
-
-.header-content {
-    flex-grow: 1;
-    /* Ngăn không cho chữ bị vỡ bố cục */
-    min-width: 0; 
-}
-
+.header-content { flex-grow: 1; min-width: 0; }
 .header-content h1 {
-    margin: 0;
-    color: #8B4513;
-    font-weight: 700;
-    line-height: 1.2;
-    
-    /* --- KỸ THUẬT ÉP 1 DÒNG --- */
-    font-size: 15px; /* Kích thước vừa đủ để không bị xuống dòng */
-    white-space: nowrap; /* Bắt buộc thẳng hàng, không xuống dòng */
-    overflow: hidden; /* Ẩn phần thừa nếu màn hình quá bé (như đồng hồ) */
-    text-overflow: ellipsis; /* Hiện dấu ... nếu vẫn không đủ chỗ */
+    margin: 0; color: #8B4513; font-weight: 700; line-height: 1.2;
+    font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
 .header-content p {
-    margin: 2px 0 0 0;
-    color: #795548;
-    font-size: 12px;
-    font-style: italic;
-    
-    /* Cũng ép dòng phụ thành 1 dòng cho gọn */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 2px 0 0 0; color: #795548; font-size: 12px; font-style: italic;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* --- MÀN HÌNH LỚN (PC/TABLET) --- */
-/* Khi màn hình rộng hơn 768px, tự động phóng to mọi thứ lên cho đẹp */
+/* --- RESPONSIVE PC --- */
 @media (min-width: 768px) {
     body { padding: 20px; }
-    
     .main-header { padding: 25px 30px; gap: 25px; }
-    
-    .logo { width: 90px; } /* Logo to lại */
-    
-    .header-content h1 { 
-        font-size: 28px; /* Chữ to lại */
-        white-space: normal; /* Cho phép xuống dòng nếu cần (trên PC thì thoải mái) */
-    }
+    .logo { width: 90px; }
+    .header-content h1 { font-size: 28px; white-space: normal; }
     .header-content p { font-size: 15px; }
 }
 
-/* --- DANH SÁCH TIN TỨC --- */
+/* --- TIN TỨC --- */
 .news-list { padding: 20px; }
-
-.news-item {
-    border-bottom: 1px solid #F0EAD6;
-    padding: 20px 0;
-}
+.news-item { border-bottom: 1px solid #F0EAD6; padding: 20px 0; }
 .news-item:last-child { border-bottom: none; }
-
-.news-item .title {
-    margin: 8px 0;
-    font-size: 18px;
-    color: #5D4037;
-    font-weight: bold;
-    line-height: 1.4;
-}
-
-.news-item .date {
-    font-size: 12px;
-    background: #FFF8E1;
-    color: #A67B5B;
-    padding: 3px 8px;
-    border-radius: 4px;
-    display: inline-block;
-}
-
-.news-item .content {
-    margin-top: 10px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #3E2723;
-    text-align: justify;
-}
-
+.news-item .title { margin: 8px 0; font-size: 18px; color: #5D4037; font-weight: bold; line-height: 1.4; }
+.news-item .date { font-size: 12px; background: #FFF8E1; color: #A67B5B; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+.news-item .content { margin-top: 10px; font-size: 15px; line-height: 1.6; color: #3E2723; text-align: justify; }
 .empty { text-align: center; color: #999; padding: 20px; }
-
-/* Footer */
-footer {
-    text-align: center;
-    padding: 15px;
-    background-color: #FFFBBE;
-    border-top: 1px solid #E6D5B8;
-}
+footer { text-align: center; padding: 15px; background-color: #FFFBBE; border-top: 1px solid #E6D5B8; }
 footer a { color: #8B4513; text-decoration: none; font-size: 13px; }
 
-/* Form Admin */
+/* --- GIAO DIỆN ADMIN (MỚI) --- */
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+.admin-header h2 { margin: 0; color: #8B4513; }
+.btn-secondary { font-size: 13px; color: #555; text-decoration: none; margin-right: 10px; }
+.btn-logout { font-size: 13px; color: red; text-decoration: none; }
+
 .form-group { margin-bottom: 15px; }
 label { display: block; margin-bottom: 5px; font-weight: bold; }
-input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; box-sizing: border-box; }
-button { background: #8B4513; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; }
+input, textarea { width: 100%; padding: 10px; border: 1px solid #D7CCC8; box-sizing: border-box; border-radius: 4px; background: #FFFCF2; font-family: inherit;}
+input:focus, textarea:focus { outline: none; border-color: #D9A404; }
+
+button { background: #8B4513; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.3s; }
+button:hover { background: #A52A2A; }
+
+/* Bảng danh sách bài viết */
+.action-btn { font-size: 12px; padding: 4px 8px; border-radius: 3px; text-decoration: none; margin-left: 5px; display: inline-block; }
+.edit-btn { background: #FFF8E1; color: #8B4513; border: 1px solid #E6D5B8; }
+.del-btn { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+.msg-success { color: green; font-weight: bold; }
+.msg-error { color: red; font-weight: bold; }

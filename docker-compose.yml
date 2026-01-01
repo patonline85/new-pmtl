@@ -8,10 +8,10 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # 1. DỮ LIỆU BÀI VIẾT (Lưu cứng ở máy chủ Armbian để không mất khi update code)
+      # ÁNH XẠ TRỰC TIẾP:
+      # Bên trái: Đường dẫn thật trên máy Armbian (nơi bạn vừa tạo folder)
+      # Bên phải: Đường dẫn trong web server
       - /home/docker/news-data:/var/www/html/data
       
-      # 2. CẤU HÌNH PHP (Tùy chọn, để upload ảnh lớn hơn nếu cần)
-      # - ./php.ini:/usr/local/etc/php/php.ini
     environment:
       - TZ=Asia/Ho_Chi_Minh

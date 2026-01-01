@@ -31,9 +31,7 @@
                 foreach ($news as $item) {
                     echo '<div class="news-item">';
                     echo '<span class="date">' . $item['date'] . '</span>';
-                    // Tiêu đề bài viết
                     echo '<h3 class="title">' . htmlspecialchars($item['title']) . '</h3>';
-                    // Nội dung bài viết
                     echo '<div class="content">' . nl2br(htmlspecialchars($item['content'])) . '</div>';
                     echo '</div>';
                 }

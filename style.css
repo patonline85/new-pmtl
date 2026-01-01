@@ -1,152 +1,125 @@
-/* Sử dụng font chữ có chân (Serif) cho trang nhã */
+/* --- CẤU HÌNH CHUNG --- */
 body {
     font-family: 'Noto Serif', 'Times New Roman', serif;
-    /* Nền tổng thể màu kem nhạt ấm áp */
-    background-color: #FDFCF8;
+    background-color: #FDFCF8; /* Màu nền trắng kem nhẹ */
     margin: 0;
-    padding: 20px;
-    color: #4A3B32; /* Màu chữ nâu đậm */
+    padding: 10px; /* Giảm padding body trên mobile cho rộng rãi */
+    color: #4A3B32;
 }
 
-/* Khung chính giữa trang */
 .container {
     max-width: 900px;
     margin: 0 auto;
-    background: #fff; /* Nền trắng để nội dung dễ đọc */
-    padding: 0; /* Bỏ padding để header tràn viền */
-    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1); /* Đổ bóng màu nâu nhẹ */
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #E6D5B8; /* Viền màu vàng nâu nhạt */
+    border: 1px solid #E6D5B8;
 }
 
-/* --- THIẾT KẾ HEADER MỚI --- */
+/* --- HEADER: QUAN TRỌNG NHẤT --- */
 .main-header {
-    /* Sử dụng màu yêu cầu làm nền cho header */
-    background-color: #FFFBBE;
-    padding: 25px 30px;
-    border-bottom: 3px solid #D9A404; /* Viền dưới màu vàng đồng */
+    background-color: #FFFBBE; /* Mã màu bạn yêu cầu */
+    padding: 15px 20px; /* Padding gọn gàng hơn */
+    border-bottom: 3px solid #D9A404;
     
-    /* Sử dụng Flexbox để căn logo và chữ nằm ngang */
+    /* FLEXBOX: Giữ logo và chữ nằm ngang hàng */
     display: flex;
     align-items: center; /* Căn giữa theo chiều dọc */
-    gap: 20px; /* Khoảng cách giữa logo và chữ */
+    justify-content: flex-start;
+    gap: 15px; /* Khoảng cách giữa Logo và Chữ */
 }
 
-/* CSS cho Logo */
+/* Điều chỉnh Logo nhỏ gọn */
 .logo {
-    max-height: 80px; /* Chiều cao tối đa của logo, điều chỉnh nếu cần */
-    width: auto;
-    /* Thêm một chút hiệu ứng nổi nhẹ cho logo */
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+    width: 60px; /* Kích thước cố định trên điện thoại */
+    height: auto; /* Tự động tính chiều cao */
+    object-fit: contain;
+    flex-shrink: 0; /* QUAN TRỌNG: Không cho logo bị méo hoặc co lại */
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
+}
+
+/* Khu vực chứa chữ */
+.header-content {
+    flex-grow: 1; /* Chiếm toàn bộ không gian còn lại */
 }
 
 .header-content h1 {
     margin: 0;
-    /* Màu tiêu đề chính: Nâu đỏ đậm */
-    color: #8B4513;
-    font-size: 2.2em;
+    color: #8B4513; /* Màu nâu Phật giáo */
+    font-size: 18px; /* Mặc định font nhỏ cho mobile */
+    line-height: 1.3;
     font-weight: 700;
 }
 
 .header-content p {
-    margin: 5px 0 0 0;
-    /* Màu chữ phụ: Nâu nhạt hơn */
+    margin: 4px 0 0 0;
     color: #795548;
+    font-size: 13px;
     font-style: italic;
+}
+
+/* --- MÀN HÌNH LỚN (PC/Tablet) --- */
+@media (min-width: 768px) {
+    body { padding: 20px; }
+    
+    .main-header { padding: 25px 30px; gap: 25px; }
+    
+    /* Trên PC thì logo to hơn */
+    .logo { width: 90px; }
+    
+    /* Trên PC chữ to hơn */
+    .header-content h1 { font-size: 28px; }
+    .header-content p { font-size: 15px; }
 }
 
 /* --- DANH SÁCH TIN TỨC --- */
-.news-list {
-    padding: 30px;
-}
+.news-list { padding: 20px; }
 
 .news-item {
-    border-bottom: 1px solid #F0EAD6; /* Viền dưới màu kem */
-    padding: 25px 0;
+    border-bottom: 1px solid #F0EAD6;
+    padding: 20px 0;
 }
-
 .news-item:last-child { border-bottom: none; }
 
-/* Tiêu đề bài viết */
 .news-item .title {
-    margin: 10px 0;
-    font-size: 20px;
-    /* Màu tiêu đề bài viết: Nâu đậm */
+    margin: 8px 0;
+    font-size: 18px;
     color: #5D4037;
     font-weight: bold;
+    line-height: 1.4;
 }
 
-/* Ngày tháng */
 .news-item .date {
-    font-size: 13px;
-    /* Nền ngày tháng màu vàng kem nhạt theo tông chủ đề */
+    font-size: 12px;
     background: #FFF8E1;
     color: #A67B5B;
-    padding: 4px 10px;
-    border-radius: 20px; /* Bo tròn viên thuốc */
+    padding: 3px 8px;
+    border-radius: 4px;
     display: inline-block;
-    border: 1px solid #FFE0B2;
 }
 
-/* Nội dung bài viết */
 .news-item .content {
-    margin-top: 15px;
-    font-size: 16px;
-    line-height: 1.7;
-    color: #3E2723; /* Màu chữ nội dung dễ đọc */
-    text-align: justify; /* Căn đều 2 bên cho trang trọng */
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #3E2723;
+    text-align: justify;
 }
 
-/* Thông báo trống */
-.empty {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-    padding: 20px;
-}
+.empty { text-align: center; color: #999; padding: 20px; }
 
 /* Footer */
 footer {
     text-align: center;
-    padding: 20px;
-    background-color: #FFFBBE; /* Nền footer cùng màu header */
+    padding: 15px;
+    background-color: #FFFBBE;
     border-top: 1px solid #E6D5B8;
 }
+footer a { color: #8B4513; text-decoration: none; font-size: 13px; }
 
-footer a {
-    font-size: 13px;
-    color: #8B4513;
-    text-decoration: none;
-}
-footer a:hover { text-decoration: underline; }
-
-/* --- CSS CHO TRANG ADMIN/FORM (Giữ lại để dùng chung) --- */
-.form-group { margin-bottom: 20px; }
-label { display: block; margin-bottom: 8px; font-weight: bold; color: #5D4037; }
-input[type="text"], input[type="password"], textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #D7CCC8;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: inherit; /* Dùng chung font với body */
-    background-color: #FFFCF2; /* Nền input hơi vàng nhẹ */
-}
-input:focus, textarea:focus {
-    outline: none;
-    border-color: #D9A404; /* Khi bấm vào thì viền màu vàng đồng */
-}
-button {
-    background-color: #8B4513; /* Nút màu nâu đậm */
-    color: #FFFBBE; /* Chữ trên nút màu kem sáng */
-    padding: 12px 25px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-    font-family: inherit;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-button:hover { background-color: #A52A2A; } /* Hover chuyển sang nâu đỏ */
+/* Form Admin (Giữ nguyên) */
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; }
+input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+button { background: #8B4513; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; }
